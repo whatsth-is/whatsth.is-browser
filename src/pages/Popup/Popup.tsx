@@ -1,16 +1,35 @@
-import React from 'react';
-import './Popup.css';
+import { AppBar, Box, Container, createTheme, CssBaseline, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { purple } from '@mui/material/colors';
+import React, { useMemo } from 'react';
 
 const Popup: React.FC = () => {
+
+	const theme = useMemo(() => createTheme({
+		palette: {
+			primary: purple,
+		}
+	}), []);
+
 	return (
-		<div className="App">
-			<header>
-				What's This?
-			</header>
-			<main>
-				<p>aaaaaaaaaaaaaaa</p>
-			</main>
-		</div>
+		<ThemeProvider theme={theme}>
+			<Box sx={{ display: 'flex' }}>
+				<CssBaseline enableColorScheme />
+				<AppBar
+					sx={{
+						backgroundColor: theme.palette.primary.main,
+					}}
+				>
+					<Toolbar>
+						<Typography variant="h6" noWrap component="div">What's this?</Typography>
+					</Toolbar>
+				</AppBar>
+				<main>
+					<Container maxWidth="md">
+						<p>Cool</p>
+					</Container>
+				</main>
+			</Box>
+		</ThemeProvider>
 	);
 };
 
