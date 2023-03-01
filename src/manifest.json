@@ -12,7 +12,7 @@
   "web_accessible_resources": [
     {
       "resources": ["logo192.png", "logo30.png"],
-      "matches": []
+      "matches": ["http://*/*", "https://*/*"]
     }
   ],
   "permissions": [
