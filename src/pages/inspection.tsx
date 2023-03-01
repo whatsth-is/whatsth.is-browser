@@ -2,7 +2,7 @@ import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import agent from "../api/agent";
 import { IInspectionResult } from "../interfaces";
-import { DisplayCMS, DisplaySecondary } from "./inspectModules";
+import { DisplayCMS, DisplaySecondary } from "../components/inspectModules";
 
 interface Props {
 	url: string;

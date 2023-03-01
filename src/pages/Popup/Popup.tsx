@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { InspectonResult } from '../../components/inspection';
+import { InspectonResult } from '../inspection';
 import Layout from '../_layout';
 
 export default function Popup() {
