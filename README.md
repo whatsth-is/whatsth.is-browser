@@ -7,7 +7,9 @@ This browser extension uses **React** via **Webpack**, built upon the **[Chrome 
 
 **Running in Dev**
 ```
-run -it --rm --name my-running-script -v "$PWD":/usr/src/app -w /usr/src/app node:16-alpine npm start
+docker run -it --rm --name npm-script \
+    -v "$PWD":/usr/src/app -w /usr/src/app \
+    node:16-alpine npm start
 ```
 
 [api]:  https://github.com/soup-bowl/api.whatsth.is
