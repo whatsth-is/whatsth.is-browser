@@ -16,13 +16,11 @@ export function InspectonResult({url}:Props) {
 	useEffect(() => {
 		setLoading(true);
 		agent.Inspection.inspect(url).then(response => {
-			alert(`cool, btw ${response.success.toString()}`);
 			setSiteDetails(response);
-			setLoading(false);
+			setRError(false);
 		}).catch((err: any) => {
 			setRError(true);
-			setLoading(false);
-		});
+		}).finally(() => setLoading(false));
 	}, [url]);
 
 	if (loading) {
@@ -41,7 +39,7 @@ export function InspectonResult({url}:Props) {
 	if (requestError || siteDetails.success === false) {
 		return (
 			<Box>
-				<Typography variant="h1" my={2}>Failed to detect {url}...</Typography>
+				<Typography variant="h1" my={2}>Detection failed</Typography>
 				<Typography my={2}>Check to make sure the site exists and is responding to public requests.</Typography>
 			</Box>
 		);
@@ -50,17 +48,16 @@ export function InspectonResult({url}:Props) {
 	if (typeof siteDetails.message !== 'string') {
 		return (
 			<Box>
-				<Typography my={1} color="darkgrey">For the URL {url} ...</Typography>
 				<Box my={2}>
 					<DisplayCMS details={siteDetails.message.technology.cms} />
 				</Box>
 				{siteDetails.message.technology.javascript.length > 0 &&
 					<Box my={2}>
 						<Typography variant="h2" my={2}>JavaScript</Typography>
-						<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+						<Grid container rowSpacing={1}>
 							{siteDetails.message.technology.javascript.map((jslib, i) => {
 								return (
-									<Grid key={i} item xs={12} md={6}>
+									<Grid key={i} item xs={12}>
 										<DisplaySecondary details={jslib} />
 									</Grid>
 								);
@@ -70,10 +67,10 @@ export function InspectonResult({url}:Props) {
 				{siteDetails.message.technology.cdn.length > 0 &&
 					<Box my={2}>
 						<Typography variant="h2" my={2}>CDN</Typography>
-						<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+						<Grid container rowSpacing={1}>
 							{siteDetails.message.technology.cdn.map((jslib, i) => {
 								return (
-									<Grid key={i} item xs={12} md={6}>
+									<Grid key={i} item xs={12}>
 										<DisplaySecondary details={jslib} />
 									</Grid>
 								);
