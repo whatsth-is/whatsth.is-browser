@@ -1,4 +1,4 @@
-import { AppBar, Box, Container, createTheme, CssBaseline, Link, styled, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Chip, Container, createTheme, CssBaseline, Link, styled, ThemeProvider, Toolbar, Typography } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import { ReactNode, useMemo } from 'react';
 
@@ -56,7 +56,7 @@ export default function Layout({children}:Props) {
 								color="inherit"
 								underline="none"
 							>
-								What's this?
+								What's this? <Chip label="Beta" color="info" size="small" />
 							</Link>
 						</Typography>
 					</Toolbar>
