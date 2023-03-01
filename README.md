@@ -12,5 +12,7 @@ docker run -it --rm --name npm-script \
     node:16-alpine npm start
 ```
 
+This will produce a `build` folder that can be loaded in as an **unpacked extension**. This differs from browser to browser, but the [extension settings are probably here](chrome://extensions).
+
 [api]:  https://github.com/soup-bowl/api.whatsth.is
 [bp]:   https://github.com/lxieyang/chrome-extension-boilerplate-react
