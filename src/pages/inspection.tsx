@@ -1,26 +1,43 @@
-import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import agent from "../api/agent";
-import { IInspectionResult } from "../interfaces";
-import { DisplayCMS, DisplaySecondary } from "../components/inspectModules";
+import { IInspectionDetails } from "../interfaces";
+import DetailCard from "../components/inspectModules";
 
 interface Props {
 	url: string;
 }
 
 export function InspectonResult({url}:Props) {
-	const [siteDetails, setSiteDetails] = useState<IInspectionResult>({} as IInspectionResult);
+	const [siteDetails, setSiteDetails] = useState<IInspectionDetails[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [requestError, setRError] = useState<boolean>(false);
 
 	useEffect(() => {
 		setLoading(true);
-		agent.Inspection.inspect(url).then(response => {
-			setSiteDetails(response);
-			setRError(false);
-		}).catch((err: any) => {
-			setRError(true);
-		}).finally(() => setLoading(false));
+
+		const addSoftwareToList = (inspection: IInspectionDetails, type: string) => {
+			let list = siteDetails;
+			let newItem = inspection;
+			newItem.type = type;
+			list.push(newItem);
+			setSiteDetails(list);
+		}
+
+		agent.Inspection.inspect(url)
+			.then(response => {
+				if (typeof response.message !== 'string') {
+					if (response.message.technology.cms !== null) { addSoftwareToList(response.message.technology.cms, 'CMS') };
+					if (response.message.technology.frontend !== null) { addSoftwareToList(response.message.technology.frontend, 'Frontend') };
+					response.message.technology.javascript.forEach((res) => addSoftwareToList(res, 'JavaScript'));
+					response.message.technology.cdn.forEach((res) => addSoftwareToList(res, 'CDN'));
+					response.message.technology.seo.forEach((res) => addSoftwareToList(res, 'SEO'));
+					response.message.technology.language.forEach((res) => addSoftwareToList(res, 'Language'));
+					response.message.technology.server.forEach((res) => addSoftwareToList(res, 'Server'));
+				}
+			})
+			.catch(() => setRError(true))
+			.finally(() => setLoading(false));
 	}, [url]);
 
 	if (loading) {
@@ -36,52 +53,43 @@ export function InspectonResult({url}:Props) {
 		);
 	}
 
-	if (requestError || siteDetails.success === false) {
-		return (
-			<Box>
-				<Typography variant="h1" my={2}>Detection failed</Typography>
-				<Typography my={2}>Check to make sure the site exists and is responding to public requests.</Typography>
-			</Box>
-		);
-	}
+	return (
+		<Box my={2}>
+			{!requestError ?
+				<>
+					{siteDetails.length > 0 ?
+						<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+							{siteDetails.map((jslib, i) => {
+								return (
+									<Grid key={i} item xs={12} md={6}>
+										<DetailCard details={jslib} />
+									</Grid>
+								);
+							})}
+						</Grid>
+						:
+						<Box>
+							<Typography variant="h1" my={2}>Nothing detected!</Typography>
+							<Typography my={1} color="darkgrey">
+								We can see the site, but nothing was detected against our algorithms
+							</Typography>
+							<Typography>
+								This can happen when the site uses technology not known by the system, or when the website is using
+								methods to customise libraries and functions, which may not be understood by the algorithm.
+							</Typography>
+						</Box>
+					}
+				</>
+				:
+				<Box>
+					<Typography variant="h1" my={2}>Access failed</Typography>
+					<Typography my={1} color="darkgrey">For some reason, our API cannot access the specified URL</Typography>
+					<Typography>
+						Check to make sure the website you specified is a correct, valid address. This can also happen if the
+						website has blocked us from scanning it.
+					</Typography>
+				</Box>}
+		</Box>
+	);
 
-	if (typeof siteDetails.message !== 'string') {
-		return (
-			<Box>
-				<Box my={2}>
-					<DisplayCMS details={siteDetails.message.technology.cms} />
-				</Box>
-				{siteDetails.message.technology.javascript.length > 0 &&
-					<Box my={2}>
-						<Typography variant="h2" my={2}>JavaScript</Typography>
-						<Grid container rowSpacing={1}>
-							{siteDetails.message.technology.javascript.map((jslib, i) => {
-								return (
-									<Grid key={i} item xs={12}>
-										<DisplaySecondary details={jslib} />
-									</Grid>
-								);
-							})}
-						</Grid>
-					</Box>}
-				{siteDetails.message.technology.cdn.length > 0 &&
-					<Box my={2}>
-						<Typography variant="h2" my={2}>CDN</Typography>
-						<Grid container rowSpacing={1}>
-							{siteDetails.message.technology.cdn.map((jslib, i) => {
-								return (
-									<Grid key={i} item xs={12}>
-										<DisplaySecondary details={jslib} />
-									</Grid>
-								);
-							})}
-						</Grid>
-					</Box>}
-			</Box>
-		);
-	} else {
-		return (<Box>
-			<Typography>an unknown error occurred.</Typography>
-		</Box>);
-	}
 };
