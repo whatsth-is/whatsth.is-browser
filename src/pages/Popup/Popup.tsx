@@ -1,6 +1,5 @@
 import { Link, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { InspectonResult } from '../inspection';
 import Layout from '../_layout';
 
 export default function Popup() {
